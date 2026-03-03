@@ -10,19 +10,46 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final List<Map<String, String>> _popularCities = [
-    {'name': 'Ош', 'query': 'Osh'},
-    {'name': 'Бишкек', 'query': 'Bishkek'},
-    {'name': 'Ысык-Кол', 'query': 'Issyk-Kul'},
-    {'name': 'Лондон', 'query': 'London'},
-    {'name': 'Нью-Йорк', 'query': 'New York'},
+
+  final List<Map<String, dynamic>> _countries = [
+      {
+      'country': 'Кыргызстан',
+      'flag': '🇰🇬',
+      'cities': [
+        {'name': 'Бишкек', 'query': 'Bishkek'},
+        {'name': 'Ош', 'query': 'Osh, Kyrgyzstan'},
+        {'name': 'Ысык-Кол', 'query': 'Issyk-Kul'},
+        {'name': 'Жалал-Абад', 'query': 'Jalal-Abad'},
+      ],
+    },
+    {
+      'country': 'Казахстан',
+      'flag': '🇰🇿',
+      'cities': [
+        {'name': 'Алматы', 'query': 'Almaty'},
+        {'name': 'Астана', 'query': 'Astana'},
+        {'name': 'Шымкент', 'query': 'Shymkent'},
+        {'name': 'Атырау', 'query': 'Atyrau'},
+      ],
+    },
+    {
+      'country': 'Россия',
+      'flag': '🇷🇺',
+      'cities': [
+        {'name': 'Москва', 'query': 'Moscow'},
+        {'name': 'Санкт-Петербург', 'query': 'Saint Petersburg'},
+        {'name': 'Новосибирск', 'query': 'Novosibirsk'},
+      ],
+    },
+
   ];
 
   void _navigateToWeather(String cityQuery, String cityName) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WeatherScreen(cityQuery: cityQuery, cityName: cityName),
+        builder: (context) =>
+            WeatherScreen(cityQuery: cityQuery, cityName: cityName),
       ),
     );
   }
@@ -58,27 +85,32 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-            const Text('⛅', style: TextStyle(fontSize: 48)),
+            const Center(child: Text('⛅', style: TextStyle(fontSize: 48))),
 
             const SizedBox(height: 8),
 
-            const Text(
-              'Прогноз погоды',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            const Center(
+              child: Text(
+                'Прогноз погоды',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
             ),
 
             const SizedBox(height: 4),
 
-            const Text(
-              'Найдите любой город или выберите из списка',
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+            const Center(
+              child: Text(
+                'Найдите любой город или выберите из списка',
+                style: TextStyle(color: Colors.grey, fontSize: 14),
+              ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             TextField(
               controller: _searchController,
@@ -87,11 +119,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
 
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.arrow_forward,
+                      color: Color(0xFF1565C0)),
+                  onPressed: _searchCity,
+                ),
+
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: Colors.grey),
                 ),
-
+                
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: Color(0xFF1565C0)),
@@ -101,73 +139,137 @@ class _HomeScreenState extends State<HomeScreen> {
               onSubmitted: (_) => _searchCity(),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 28),
 
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisExtent: 160,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
+            ..._countries.map((countryData) {
+              final cities =
+                  countryData['cities'] as List<Map<String, String>>;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
 
-              itemCount: _popularCities.length,
-              itemBuilder: (context, index) {
-                final city = _popularCities[index];
+                  Row(
+                    children: [
 
-                return Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                      Text(
+                        countryData['flag'] as String,
+                        style: const TextStyle(fontSize: 22),
+                      ),
+
+                      const SizedBox(width: 8),
+
+                      Text(
+                        countryData['country'] as String,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                    ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(13),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
 
-                        Text(
-                          city['name']!,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  const SizedBox(height: 10),
+
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisExtent: 110,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+
+                    itemCount: cities.length,
+                    itemBuilder: (context, index) {
+                      final city = cities[index];
+
+                      return Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
 
-                        const SizedBox(height: 4),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () => _navigateToWeather(
+                              city['query']!, city['name']!),
 
-                        const Text(
-                          'Посмотреть погоду и прогноз',
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
-                          textAlign: TextAlign.center,
-                        ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
 
-                        const SizedBox(height: 12),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
 
-                        ElevatedButton.icon(
-                          onPressed: () => _navigateToWeather(city['query']!, city['name']!),
+                                Text(
+                                  city['name']!,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
 
-                          icon: const Text('☁️', style: TextStyle(fontSize: 14)),
+                                const Text(
+                                  'Нажмите для просмотра',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 11),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
 
-                          label: const Text('Смотреть погоду', style: TextStyle(fontSize: 12), textAlign: TextAlign.center,),
+                                SizedBox(
+                                  height: 32,
+                                  child: ElevatedButton.icon(
 
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1565C0),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                                    onPressed: () => _navigateToWeather(
+                                        city['query']!, city['name']!),
+
+                                    icon: const Text('☁️',
+                                        style: TextStyle(fontSize: 11)),
+
+                                    label: const Text(
+                                      'Погода',
+                                      style: TextStyle(fontSize: 12),
+
+                                    ),
+
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          const Color(0xFF1565C0),
+
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20),
+                                      ),
+                                      
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                  ),
+                                ),
+
+                              ],
                             ),
                           ),
                         ),
-
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
+                  const SizedBox(height: 24),
+                ],
+              );
+            }),
           ],
         ),
       ),

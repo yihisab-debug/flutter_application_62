@@ -7,7 +7,7 @@ const String baseUrl = 'https://api.weatherapi.com/v1';
 class WeatherService {
   static Future<Map<String, dynamic>> getCurrentWeather(String city) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/forecast.json?key=$apiKey&q=$city&days=7&lang=ru'),
+      Uri.parse('$baseUrl/forecast.json?key=$apiKey&q=$city&days=7&lang=ru&aqi=yes'),
     );
     if (response.statusCode == 200) {
       return json.decode(response.body);
